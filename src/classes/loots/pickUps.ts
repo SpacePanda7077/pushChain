@@ -4,7 +4,7 @@ export class Coin {
     scene: Phaser.Scene;
     x: number;
     y: number;
-    coin: Phaser.GameObjects.Arc;
+    coin: Phaser.GameObjects.Sprite;
     world: RAPIER.World;
     rigidBody: RAPIER.RigidBody;
     constructor(
@@ -19,7 +19,17 @@ export class Coin {
         this.y = y;
     }
     createCoin() {
-        this.coin = this.scene.add.circle(this.x, this.y, 10, 0xfff000);
+        this.coin = this.scene.add.sprite(this.x, this.y, "coin");
+        this.coin.anims.create({
+            key: "roll",
+            frames: this.coin.anims.generateFrameNumbers("coin", {
+                start: 0,
+                end: 5,
+            }),
+            frameRate: 10,
+            repeat: -1,
+        });
+        this.coin.play("roll");
         const rbDesc = RAPIER.RigidBodyDesc.fixed()
             .setTranslation(this.x, this.y)
             .setUserData({ type: "coin" });

@@ -41,8 +41,12 @@ export class Game extends Scene {
         this.load.image("walls", "maps/grass_vally_wall.png");
         this.load.tilemapTiledJSON("map", "json/grass_vally.json");
         this.load.spritesheet("player", "player/player.png", {
-            frameWidth: 128,
-            frameHeight: 128,
+            frameWidth: 32,
+            frameHeight: 32,
+        });
+        this.load.spritesheet("coin", "coin.png", {
+            frameWidth: 64,
+            frameHeight: 64,
         });
     }
 

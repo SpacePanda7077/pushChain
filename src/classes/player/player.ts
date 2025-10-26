@@ -37,6 +37,7 @@ export class Player {
     MaxHealth: number;
     coinsCollected: number;
     isMoving: boolean;
+    shadow: Phaser.GameObjects.Ellipse;
     constructor(
         scene: Phaser.Scene,
         world: RAPIER.World,
@@ -48,7 +49,7 @@ export class Player {
         this.x = x;
         this.y = y;
         this.speed = 100;
-        this.health = 10;
+        this.health = 100;
         this.MaxHealth = 100;
         this.inputVector = { x: 0, y: 0 };
         this.createPlayerBody();
@@ -75,7 +76,17 @@ export class Player {
     }
 
     createPlayerBody() {
-        this.body = this.scene.add.sprite(this.x, this.y, "player");
+        this.body = this.scene.add
+            .sprite(this.x, this.y, "player")
+            .setScale(1.3);
+        this.shadow = this.scene.add.ellipse(
+            this.x,
+            this.y + 20,
+            30,
+            20,
+            0x000000,
+            0.5
+        );
         this.createAnimation();
         this.body.play("idle");
         const rigidBodyDesc = RAPIER.RigidBodyDesc.dynamic()
@@ -92,7 +103,7 @@ export class Player {
             key: "idle",
             frames: this.body.anims.generateFrameNumbers("player", {
                 start: 0,
-                end: 2,
+                end: 1,
             }),
             frameRate: 5,
             repeat: -1,
@@ -100,8 +111,8 @@ export class Player {
         this.body.anims.create({
             key: "run",
             frames: this.body.anims.generateFrameNumbers("player", {
-                start: 3,
-                end: 7,
+                start: 2,
+                end: 10,
             }),
             frameRate: 10,
             repeat: -1,
@@ -189,6 +200,7 @@ export class Player {
         const position = this.rigidBody.translation();
         this.body.x = position.x;
         this.body.y = position.y;
+        this.shadow.setPosition(this.body.x, this.body.y + 20);
         if (!this.gun) return;
         this.gun.x = position.x;
         this.gun.y = position.y;
@@ -306,12 +318,10 @@ export class Player {
     checkForDeath() {
         if (this.health <= 0) {
             this.scene.scene.pause();
-            this.scene.scene
-                .get("Ui")
-                .events.emit("show_lose_menu", {
-                    highScore: this.enemyKilled,
-                    coinsCollected: this.coinsCollected,
-                });
+            this.scene.scene.get("Ui").events.emit("show_lose_menu", {
+                highScore: this.enemyKilled,
+                coinsCollected: this.coinsCollected,
+            });
         }
     }
     flipPlayer(MouseX: number) {
