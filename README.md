@@ -1,4 +1,4 @@
-PushChain — Vampire Survivor + Web3 (Hackathon Entry)
+PushChain — Survivor
 
 Tagline: Survive longer, craft on-chain tools, and climb the on-chain leaderboard.
 Repo: SpacePanda7077/pushChain (Phaser + React + Vite template).
