@@ -30,7 +30,7 @@ export class Ui extends Scene {
     coinCollectedText: Phaser.GameObjects.Text;
     loseMenu: Phaser.GameObjects.Container;
     highScore: Phaser.GameObjects.Text;
-    enemyKilled: Phaser.GameObjects.Text;
+    coins: Phaser.GameObjects.Text;
     constructor() {
         super("Ui");
     }
@@ -91,9 +91,14 @@ export class Ui extends Scene {
             this.scene.get("Game").events.emit("Option_Chosen");
         });
 
-        this.events.on("show_lose_menu", () => {
-            this.loseMenu.setActive(true).setVisible(true);
-        });
+        this.events.on(
+            "show_lose_menu",
+            (data: { highScore: number; coinsCollected: number }) => {
+                this.loseMenu.setActive(true).setVisible(true);
+                this.highScore.text = `HighScore : ${data.highScore}`;
+                this.coins.text = `Coins Collected : ${data.coinsCollected}`;
+            }
+        );
         EventBus.emit("current-scene-ready", this);
     }
     createHealthBar(x: number, y: number, width: number, height: number) {
@@ -208,7 +213,7 @@ export class Ui extends Scene {
         const bg = this.add.rectangle(0, 0, 400, 500, 0x000000, 0.7);
         const text = this.add.text(0, -40, "you lost").setOrigin(0.5);
         this.highScore = this.add.text(0, 0, "HighScore : 0").setOrigin(0.5);
-        this.enemyKilled = this.add
+        this.coins = this.add
             .text(0, 40, this.enemyKilledText.text)
             .setOrigin(0.5);
         const claimBtn = this.add
@@ -223,6 +228,9 @@ export class Ui extends Scene {
             .on("pointerdown", () => {
                 claimBtn.setActive(false);
                 EventBus.emit("claim", 10);
+                this.scene.stop();
+                this.scene.get("Game").scene.start("Menu");
+                this.scene.get("Game").scene.stop();
             });
         const claimText = this.add.text(100, 150, "Claim").setOrigin(0.5);
         const mainMenuBtn = this.add
@@ -242,7 +250,7 @@ export class Ui extends Scene {
                 bg,
                 text,
                 this.highScore,
-                this.enemyKilled,
+                this.coins,
                 claimBtn,
                 claimText,
                 mainMenuBtn,

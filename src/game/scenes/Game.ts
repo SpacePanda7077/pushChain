@@ -117,8 +117,8 @@ export class Game extends Scene {
         this.moveBullets();
         // Check for collisions
         this.checkCollisions();
-        //collect pickup
-        this.collectPickUp();
+        this.deleteCoinIfTooFar();
+
         // Check if options menu can be opened
         // this.checkIfOptionIsAvailable();
     }
@@ -248,6 +248,13 @@ export class Game extends Scene {
                 ) {
                     this.EnemyHitBoxToPlayer(b1, b2);
                 }
+                if (
+                    (b1?.userData as userData).type === "player" &&
+                    (b2?.userData as userData).type === "coin"
+                ) {
+                    //collect pickup
+                    this.collectPickUp(b1, b2);
+                }
             } else {
                 // Collision ended
             }
@@ -282,6 +289,24 @@ export class Game extends Scene {
             }
         }
     }
+    deleteCoinIfTooFar() {
+        this.availablePickups.forEach((pickup) => {
+            const distance = Phaser.Math.Distance.Between(
+                pickup.x,
+                pickup.y,
+                this.player.body.x,
+                this.player.body.y
+            );
+            if (distance > 800) {
+                pickup.coin.destroy();
+                this.world.removeRigidBody(pickup.rigidBody);
+                const index = this.availablePickups.findIndex(
+                    (pickup_) => pickup_ === pickup
+                );
+                this.availablePickups.splice(index, 1);
+            }
+        });
+    }
     EnemyHitBoxToPlayer(
         b1: RAPIER.RigidBody | null,
         b2: RAPIER.RigidBody | null
@@ -305,27 +330,22 @@ export class Game extends Scene {
             }
         }
     }
-    collectPickUp() {
-        this.availablePickups.forEach((pickup) => {
-            const distance = Phaser.Math.Distance.Between(
-                pickup.x,
-                pickup.y,
-                this.player.body.x,
-                this.player.body.y
+    collectPickUp(b1: RAPIER.RigidBody | null, b2: RAPIER.RigidBody | null) {
+        const collidedPickup = this.availablePickups.find(
+            (pickup) => pickup.rigidBody === b2
+        );
+        if (collidedPickup) {
+            collidedPickup.coin.destroy();
+            this.world.removeRigidBody(collidedPickup.rigidBody);
+            const index = this.availablePickups.findIndex(
+                (pickup) => pickup === collidedPickup
             );
-            if (distance < 30) {
-                const coin = pickup;
-                pickup.coin.destroy();
-                const index = this.availablePickups.findIndex(
-                    (pickup) => pickup === coin
-                );
-                this.availablePickups.splice(index, 1);
-                this.player.coinsCollected += 1;
-                this.scene
-                    .get("Ui")
-                    .events.emit("collected_coin", this.player.coinsCollected);
-            }
-        });
+            this.availablePickups.splice(index, 1);
+            this.player.coinsCollected += 1;
+            this.scene
+                .get("Ui")
+                .events.emit("collected_coin", this.player.coinsCollected);
+        }
     }
 
     openOptionsMenu() {

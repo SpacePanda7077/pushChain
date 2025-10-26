@@ -282,8 +282,13 @@ export class Crawlers extends IEnemy {
         this.onDestroy();
         const dropChance = Math.random();
         if (dropChance < 0.8) {
-            const pickUp = new Coin(this.scene, this.body.x, this.body.y);
-            pickUp.createCoin(pickUpArray);
+            const pickUp = new Coin(
+                this.scene,
+                this.world,
+                this.body.x,
+                this.body.y
+            );
+            pickUp.createCoin();
             pickUpArray.push(pickUp);
         }
         this.world.removeRigidBody(this.rigidBody);

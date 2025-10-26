@@ -5,50 +5,9 @@ import { usePushChainClient, usePushWalletContext } from "@pushchain/ui-kit";
 import { PushChain } from "@pushchain/core";
 import { createPublicClient, http } from "viem";
 import { EventBus } from "../game/EventBus";
-
-const ContractAddress = "0x5f692Ae8f4C5D216C8578bf3857C88C35F39De2B";
+import { ContractAddress, Abi } from "../blockChain/blockChainInfo";
 
 function Claim() {
-    const Abi = [
-        {
-            inputs: [],
-            stateMutability: "nonpayable",
-            type: "constructor",
-        },
-        {
-            inputs: [
-                {
-                    internalType: "address",
-                    name: "player",
-                    type: "address",
-                },
-            ],
-            name: "getHighScore",
-            outputs: [
-                {
-                    internalType: "uint256",
-                    name: "",
-                    type: "uint256",
-                },
-            ],
-            stateMutability: "view",
-            type: "function",
-        },
-        {
-            inputs: [
-                {
-                    internalType: "uint256",
-                    name: "score",
-                    type: "uint256",
-                },
-            ],
-            name: "setHighScore",
-            outputs: [],
-            stateMutability: "nonpayable",
-            type: "function",
-        },
-    ];
-
     // create wallet config to pass to Provider
     const { universalAccount } = usePushWalletContext();
 

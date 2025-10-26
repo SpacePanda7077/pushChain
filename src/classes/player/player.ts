@@ -223,6 +223,9 @@ export class Player {
             pointer.worldY
         );
         this.gun.rotation = this.angle;
+        const fliped = this.flipPlayer(pointer.worldX);
+        this.body.flipX = fliped;
+        this.gun.flipY = fliped;
     }
     createBullet() {
         const bullet = new Bullet(
@@ -303,8 +306,21 @@ export class Player {
     checkForDeath() {
         if (this.health <= 0) {
             this.scene.scene.pause();
-            this.scene.scene.get("Ui").events.emit("show_lose_menu");
+            this.scene.scene
+                .get("Ui")
+                .events.emit("show_lose_menu", {
+                    highScore: this.enemyKilled,
+                    coinsCollected: this.coinsCollected,
+                });
         }
+    }
+    flipPlayer(MouseX: number) {
+        const x = MouseX - this.body.x;
+
+        if (x > 0) {
+            return false;
+        }
+        return true;
     }
 }
 

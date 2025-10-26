@@ -1,19 +1,15 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { IRefPhaserGame, PhaserGame } from "./PhaserGame";
 // Import Push UI Kit
 import {
     PushUI,
     PushUniversalAccountButton,
     PushUniversalWalletProvider,
-    usePushChainClient,
-    usePushWalletContext,
 } from "@pushchain/ui-kit";
-import { PushChain } from "@pushchain/core";
-import Balance from "./components/Balance";
-import { EventBus } from "./game/EventBus";
-import Claim from "./components/Claim";
 
-const ContractAddress = "0x5f692Ae8f4C5D216C8578bf3857C88C35F39De2B";
+import Balance from "./components/Balance";
+
+import Claim from "./components/Claim";
 
 function App() {
     const walletConfig = {
