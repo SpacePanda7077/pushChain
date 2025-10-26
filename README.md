@@ -1,246 +1,216 @@
-# Phaser React TypeScript Template
+PushChain — Vampire Survivor + Web3 (Hackathon Entry)
 
-This is a Phaser 3 project template that uses the React framework and Vite for bundling. It includes a bridge for React to Phaser game communication, hot-reloading for quick development workflow and scripts to generate production-ready builds.
+Tagline: Survive longer, craft on-chain tools, and climb the on-chain leaderboard.
+Repo: SpacePanda7077/pushChain (Phaser + React + Vite template).
+GitHub
 
-**[This Template is also available as a JavaScript version.](https://github.com/phaserjs/template-react)**
+Project Summary
 
-### Versions
+PushChain is a browser game inspired by Vampire Survivors, reimagined as a Web3 survival shooter on Push Chain. Players collect in-game tokens while surviving waves, use tokens to craft on-chain consumables (grenades, stims, boosters), and can trade crafted items. A persistent on-chain leaderboard tracks top survivors. The frontend is built with Phaser (game) + React (UI) and Vite.
 
-This template has been updated for:
+Why it’s hackathon-ready:
 
-- [Phaser 3.90.0](https://github.com/phaserjs/phaser)
-- [React 19.0.0](https://github.com/facebook/react)
-- [Vite 6.3.1](https://github.com/vitejs/vite)
-- [TypeScript 5.7.2](https://github.com/microsoft/TypeScript)
+Combines addictive arcade gameplay with tangible on-chain assets.
 
-![screenshot](screenshot.png)
+Demonstrates an end-to-end Web3 UX: play → earn tokens → craft on-chain → trade / leaderboard.
 
-## Requirements
+Small, demonstrable vertical for judges: play demo, show token flow, show leaderboard.
 
-[Node.js](https://nodejs.org) is required to install dependencies and run scripts via `npm`.
+Demo / Screenshot
 
-## Available Commands
+(Replace with a short GIF of gameplay if you have one.)
 
-| Command | Description |
-|---------|-------------|
-| `npm install` | Install project dependencies |
-| `npm run dev` | Launch a development web server |
-| `npm run build` | Create a production build in the `dist` folder |
-| `npm run dev-nolog` | Launch a development web server without sending anonymous data (see "About log.js" below) |
-| `npm run build-nolog` | Create a production build in the `dist` folder without sending anonymous data (see "About log.js" below) |
+Key Features
 
-## Writing Code
+Fast arcade survival gameplay (Phaser).
 
-After cloning the repo, run `npm install` from your project directory. Then, you can start the local development server by running `npm run dev`.
+Token collection while playing (in-game currency).
 
-The local development server runs on `http://localhost:8080` by default. Please see the Vite documentation if you wish to change this, or add SSL support.
+Crafting system that mints/upgrades items on-chain (grenades, stims, etc).
 
-Once the server is running you can edit any of the files in the `src` folder. Vite will automatically recompile your code and then reload the browser.
+On-chain leaderboard: survival time / score recorded immutably.
 
-## Template Project Structure
+Marketplace: players can list/sell crafted items (player economy).
 
-We have provided a default project structure to get you started. This is as follows:
+React UI for menus, inventory, and leaderboard.
 
-| Path                          | Description                                                                 |
-|-------------------------------|-----------------------------------------------------------------------------|
-| `index.html`                  | A basic HTML page to contain the game.                                     |
-| `src`                         | Contains the React client source code.                                     |
-| `src/main.tsx`                | The main **React** entry point. This bootstraps the React application.      |
-| `src/PhaserGame.tsx`          | The React component that initializes the Phaser Game and acts as a bridge between React and Phaser. |
-| `src/vite-env.d.ts`           | Global TypeScript declarations, providing type information.                |
-| `src/App.tsx`                 | The main React component.                                                  |
-| `src/game/EventBus.ts`        | A simple event bus to communicate between React and Phaser.                |
-| `src/game`                    | Contains the game source code.                                             |
-| `src/game/main.tsx`           | The main **game** entry point. This contains the game configuration and starts the game. |
-| `src/game/scenes/`            | The folder where Phaser Scenes are located.                                |
-| `public/style.css`            | Some simple CSS rules to help with page layout.                            |
-| `public/assets`               | Contains the static assets used by the game.                               |
+Tech Stack
 
-## React Bridge
+Frontend: React + Phaser 3 + TypeScript + Vite.
+GitHub
 
-The `PhaserGame.tsx` component is the bridge between React and Phaser. It initializes the Phaser game and passes events between the two.
+Chain: Push Chain (smart contracts for tokens, items, leaderboard).
 
-To communicate between React and Phaser, you can use the **EventBus.js** file. This is a simple event bus that allows you to emit and listen for events from both React and Phaser.
+Wallet: Web3 provider for the user wallet (e.g., MetaMask or Push Chain compatible wallet).
 
-```js
-// In React
-import { EventBus } from './EventBus';
+Optional: IPFS for item metadata, TheGraph-style indexing or lightweight offchain indexer for richer leaderboards.
 
-// Emit an event
-EventBus.emit('event-name', data);
+Architecture (high level)
 
-// In Phaser
-// Listen for an event
-EventBus.on('event-name', (data) => {
-    // Do something with the data
-});
-```
+Client (React + Phaser) — gameplay, input, local token accounting, UI.
 
-In addition to this, the `PhaserGame` component exposes the Phaser game instance along with the most recently active Phaser Scene using React forwardRef.
+Onchain Contracts — ERC-20 style token (game currency) + ERC-1155 / ERC-721 or custom item contract for crafted items + Leaderboard contract (records top scores/addresses).
 
-Once exposed, you can access them like any regular react reference.
+Backend / Indexer (optional) — optional offchain indexer for efficient leaderboard queries and marketplace search.
 
-## Phaser Scene Handling
+Wallet & Sign — players sign mint/craft/submit transactions from the client.
 
-In Phaser, the Scene is the lifeblood of your game. It is where you sprites, game logic and all of the Phaser systems live. You can also have multiple scenes running at the same time. This template provides a way to obtain the current active scene from React.
+What’s included in this repo
 
-You can get the current Phaser Scene from the component event `"current-active-scene"`. In order to do this, you need to emit the event `"current-scene-ready"` from the Phaser Scene class. This event should be emitted when the scene is ready to be used. You can see this done in all of the Scenes in our template.
+This repo currently contains the Phaser + React frontend template (game code, UI, assets, scripts). See the project structure in the repo for the entry points and scene structure.
+GitHub
 
-**Important**: When you add a new Scene to your game, make sure you expose to React by emitting the `"current-scene-ready"` event via the `EventBus`, like this:
+Note: If your smart contracts live in a different repo or aren’t added yet, explicitly link them from here (recommended). If you do not have on-chain contracts here yet, the README below includes example smart contract interfaces and sample scripts you can add.
 
+Quickstart (Local dev)
 
-```ts
-class MyScene extends Phaser.Scene
-{
-    constructor ()
-    {
-        super('MyScene');
-    }
+# clone
 
-    create ()
-    {
-        // Your Game Objects and logic here
+git clone https://github.com/SpacePanda7077/pushChain.git
+cd pushChain
 
-        // At the end of create method:
-        EventBus.emit('current-scene-ready', this);
-    }
-}
-```
+# install
 
-You don't have to emit this event if you don't need to access the specific scene from React. Also, you don't have to emit it at the end of `create`, you can emit it at any point. For example, should your Scene be waiting for a network request or API call to complete, it could emit the event once that data is ready.
+npm install
 
-### React Component Example
+# run dev server
 
-Here's an example of how to access Phaser data for use in a React Component:
+npm run dev
 
-```ts
-import { useRef } from 'react';
-import { IRefPhaserGame } from "./game/PhaserGame";
+# build for production
 
-// In a parent component
-const ReactComponent = () => {
+npm run build
 
-    const phaserRef = useRef<IRefPhaserGame>(); // you can access to this ref from phaserRef.current
+Default dev server: http://localhost:8080 (or the port Vite chooses).
 
-    const onCurrentActiveScene = (scene: Phaser.Scene) => {
-    
-        // This is invoked
+Environment / Config
 
-    }
+Create a .env (or .env.local) and set typical variables:
 
-    return (
-        ...
-        <PhaserGame ref={phaserRef} currentActiveScene={onCurrentActiveScene} />
-        ...
-    );
+VITE_RPC_URL=https://rpc.pushchain.example # Push Chain RPC
+VITE_CONTRACT_ADDRESS_ITEM=0x... # deployed item contract
+VITE_CONTRACT_ADDRESS_TOKEN=0x... # deployed token contract
+VITE_CONTRACT_ADDRESS_LEADERBOARD=0x...
 
-}
-```
+The game will check for a connected wallet and call contract functions for craft/mint/leaderboard.
 
-In the code above, you can get a reference to the current Phaser Game instance and the current Scene by creating a reference with `useRef()` and assign to PhaserGame component.
+On-chain Contracts — suggested interfaces
 
-From this state reference, the game instance is available via `phaserRef.current.game` and the most recently active Scene via `phaserRef.current.scene`.
+You can implement contracts in Solidity (or Push Chain supported language). Here are compact interfaces to include in your repo or link to a contracts folder:
 
-The `onCurrentActiveScene` callback will also be invoked whenever the the Phaser Scene changes, as long as you emit the event via the EventBus, as outlined above.
+GameToken (ERC-20-like)
 
-## Handling Assets
+mint(address to, uint256 amount) — (owner/minter role) or mint via gameplay bridge.
 
-Vite supports loading assets via JavaScript module `import` statements.
+transfer/approve standard ERC-20.
 
-This template provides support for both embedding assets and also loading them from a static folder. To embed an asset, you can import it at the top of the JavaScript file you are using it in:
+Item (ERC-1155 or ERC-721)
 
-```js
-import logoImg from './assets/logo.png'
-```
+craftItem(address player, uint256 itemId, bytes data) — mints item when player crafts.
 
-To load static files such as audio files, videos, etc place them into the `public/assets` folder. Then you can use this path in the Loader calls within Phaser:
+listItem(uint256 itemId, uint256 price) — optional marketplace hooks.
 
-```js
-preload ()
-{
-    //  This is an example of an imported bundled image.
-    //  Remember to import it at the top of this file
-    this.load.image('logo', logoImg);
+Leaderboard
 
-    //  This is an example of loading a static image
-    //  from the public/assets folder:
-    this.load.image('background', 'assets/bg.png');
-}
-```
+submitScore(address player, uint256 score, uint256 timestamp) — store best score; only allow updates if new score > previous.
 
-When you issue the `npm run build` command, all static assets are automatically copied to the `dist/assets` folder.
+Implementation notes:
 
-## Deploying to Production
+Keep submitScore cheap — store minimal data onchain (address, score, timestamp). Do verification client-side (server/indexer can validate legitimacy if needed).
 
-After you run the `npm run build` command, your code will be built into a single bundle and saved to the `dist` folder, along with any other assets your project imported, or stored in the public assets folder.
+For hackathon demo, you can accept signed client submissions or restrict to owner/testers to avoid spam.
 
-In order to deploy your game, you will need to upload *all* of the contents of the `dist` folder to a public facing web server.
+Local Demo Mode (no chain)
 
-## Customizing the Template
+For a quick hackathon demo without deploying contracts, include a local mock mode:
 
-### Vite
+VITE_MOCK_CHAIN=true
 
-If you want to customize your build, such as adding plugin (i.e. for loading CSS or fonts), you can modify the `vite/config.*.mjs` file for cross-project changes, or you can modify and/or create new configuration files and target them in specific npm tasks inside of `package.json`. Please see the [Vite documentation](https://vitejs.dev/) for more information.
+Mock API endpoints simulate mint/craft/leaderboard calls locally (in memory).
+This lets judges play the full UX without requiring wallet setup.
 
-## About log.js
+How gameplay → chain flow works (example)
 
-If you inspect our node scripts you will see there is a file called `log.js`. This file makes a single silent API call to a domain called `gryzor.co`. This domain is owned by Phaser Studio Inc. The domain name is a homage to one of our favorite retro games.
+Player picks up tokens while playing (client increments ephemeral token count).
 
-We send the following 3 pieces of data to this API: The name of the template being used (vue, react, etc). If the build was 'dev' or 'prod' and finally the version of Phaser being used.
+When player crafts, the client calls the craftItem contract (wallet prompt → on-chain mint).
 
-At no point is any personal data collected or sent. We don't know about your project files, device, browser or anything else. Feel free to inspect the `log.js` file to confirm this.
+Crafted item appears in the player's on-chain inventory (and in UI via contract events).
 
-Why do we do this? Because being open source means we have no visible metrics about which of our templates are being used. We work hard to maintain a large and diverse set of templates for Phaser developers and this is our small anonymous way to determine if that work is actually paying off, or not. In short, it helps us ensure we're building the tools for you.
+When the run ends, player can submit their run to the Leaderboard contract (transaction or signed message).
 
-However, if you don't want to send any data, you can use these commands instead:
+Marketplace allows listing minted items for sale (on-chain or via simple offchain orderbook signed messages).
 
-Dev:
+Testing & Deploy
 
-```bash
-npm run dev-nolog
-```
+Unit test contracts with Hardhat/Foundry (recommended). Add test scripts under contracts/test.
 
-Build:
+Use local chain (Hardhat, Anvil) for dev. For Push Chain integration, use the testnet RPC and a test wallet.
 
-```bash
-npm run build-nolog
-```
+Provide one-click deploy scripts (npm scripts) to compile and deploy contracts and output addresses into .env.
 
-Or, to disable the log entirely, simply delete the file `log.js` and remove the call to it in the `scripts` section of `package.json`:
+Hackathon Pitch (short)
 
-Before:
+Problem: Modern Web2 arcade games lack real ownership and persistent on-chain value.
+Solution: PushChain combines fast arcade gameplay with meaningful on-chain assets and an immutable leaderboard — players earn tokens, craft items that truly exist onchain, and trade them. Judges can immediately try gameplay, craft an item, and watch the onchain leaderboard update (or in mock demo mode, show full UX offline).
 
-```json
-"scripts": {
-    "dev": "node log.js dev & dev-template-script",
-    "build": "node log.js build & build-template-script"
-},
-```
+Why it wins:
 
-After:
+Clear, demoable vertical (play → mint → trade → leaderboard).
 
-```json
-"scripts": {
-    "dev": "dev-template-script",
-    "build": "build-template-script"
-},
-```
+Player-first UX: immediate gratification + long-term ownership.
 
-Either of these will stop `log.js` from running. If you do decide to do this, please could you at least join our Discord and tell us which template you're using! Or send us a quick email. Either will be super-helpful, thank you.
+Extensible: add more item types, rarities, and tournaments.
 
-## Join the Phaser Community!
+Roadmap (post-hackathon)
 
-We love to see what developers like you create with Phaser! It really motivates us to keep improving. So please join our community and show-off your work 😄
+Add full Push Chain smart contract suite (token, items, leaderboard).
 
-**Visit:** The [Phaser website](https://phaser.io) and follow on [Phaser Twitter](https://twitter.com/phaser_)<br />
-**Play:** Some of the amazing games [#madewithphaser](https://twitter.com/search?q=%23madewithphaser&src=typed_query&f=live)<br />
-**Learn:** [API Docs](https://newdocs.phaser.io), [Support Forum](https://phaser.discourse.group/) and [StackOverflow](https://stackoverflow.com/questions/tagged/phaser-framework)<br />
-**Discord:** Join us on [Discord](https://discord.gg/phaser)<br />
-**Code:** 2000+ [Examples](https://labs.phaser.io)<br />
-**Read:** The [Phaser World](https://phaser.io/community/newsletter) Newsletter<br />
+Add marketplace with escrow and royalties.
 
-Created by [Phaser Studio](mailto:support@phaser.io). Powered by coffee, anime, pixels and love.
+Add tournaments & seasonal leaderboards.
 
-The Phaser logo and characters are &copy; 2011 - 2025 Phaser Studio Inc.
+Add analytics + TheGraph indexing for fast queries.
 
-All rights reserved.
+Contributing
+
+Fork the repo.
+
+Create a branch feature/<name>.
+
+Implement and open a PR.
+
+Use issues for bug reports / small feature ideas.
+
+Credits & License
+
+Built using Phaser + React + Vite template.
+GitHub
+
+License: MIT.
+
+Contact / Demo
+
+Owner: SpacePanda7077 on GitHub.
+
+For a live demo link (if available) add it here so judges can play immediately.
+
+Notes I left for you (quick checklist you can paste into README or use while presenting)
+
+Add link to deployed demo or short gameplay GIF (very helpful).
+
+Add contracts/ folder and link compiled addresses in .env.
+
+Add mock-mode startup script for offline demos (npm run dev:mock).
+
+Add short 1-minute pitch (video or README header) describing novelty.
+
+If you want, I can:
+
+Produce a short 45–60 second pitch script for judges.
+
+Add a contracts/ folder and example Solidity interfaces and deploy scripts (Hardhat).
+
+Generate a small GIF workflow and README badges.
+
+Which of those should I do next? (I can just add them directly into the README/ repo content you want — tell me which bit and I’ll create the markdown/contract skeleton right here.)
