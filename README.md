@@ -1,77 +1,105 @@
-PushChain — Survivor
+🕹️ Push Survivors
 
-Tagline: Survive longer, craft on-chain tools, and climb the on-chain leaderboard.
-Repo: SpacePanda7077/pushChain (Phaser + React + Vite template).
-GitHub
+A Web3 survival shooter on Push Chain where players upload, mint, and upgrade their own NFT weapons to fight, earn, and trade.
 
-Project Summary
+🚀 Overview
 
-PushChain is a browser game inspired by Vampire Survivors, reimagined as a Web3 survival shooter on Push Chain. Players collect in-game tokens while surviving waves, use tokens to craft on-chain consumables (grenades, stims, boosters), and can trade crafted items. A persistent on-chain leaderboard tracks top survivors. The frontend is built with Phaser (game) + React (UI) and Vite.
+Push Survivors is a blockchain-powered roguelike survival game built on Push Chain.
+Players upload their custom gun designs, mint them as NFTs, and use them in fast-paced gameplay to fight waves of enemies.
 
-Key Features
+As you survive longer, you earn in-game coins — which can be converted into on-chain tokens after each round. These tokens can then be used to upgrade weapons, buy on-chain utilities, or trade items with other players.
 
-Fast arcade survival gameplay (Phaser).
+The game merges skill-based progression with true asset ownership, creating a fun, replayable, and decentralized gaming economy.
 
-Token collection while playing (in-game currency).
+🎯 Problem It Solves
 
-Crafting system that mints/upgrades items on-chain (grenades, stims, etc).
+Most Web3 games make NFTs purely collectible — static assets with no real use or progression.
+Push Survivors changes that by making NFTs functional, upgradeable, and interactive, rewarding real gameplay skill and giving players true ownership and utility over their in-game items.
 
-On-chain leaderboard: survival time / score recorded immutably.
+🧩 Core Features
+Feature Description
+🔫 NFT Weapon Uploads Players can upload and mint custom guns as ERC-1155 NFTs.
+💀 Survival Mode Fight endless waves of enemies and earn coins for every kill.
+💰 On-Chain Rewards In-game coins convert to real tokens after each game session.
+⚙️ Upgradeable Weapons (coming soon) Use tokens to improve your NFT weapons’ stats and abilities.
+🔁 Weapon Selection (coming soon) Equip and swap between owned NFT guns in your loadout.
+🛒 Trading & Crafting (coming soon) Trade or craft utilities like grenades, stims, and upgrades.
+🏆 On-Chain Leaderboard Track top survivors directly on-chain.
+🧠 Vision
 
-Marketplace: players can list/sell crafted items (player economy).
+To build a decentralized gaming ecosystem where players own, upgrade, and trade everything they earn — merging the fun of skill-based gaming with blockchain-backed digital ownership.
 
-React UI for menus, inventory, and leaderboard.
+⚙️ Tech Stack
+Layer Technology
+Frontend React + Phaser
+Blockchain Push Chain
+Smart Contracts Solidity (ERC-1155 standard)
+Backend / API Node.js + Express
+Storage IPFS / Pinata for metadata and weapon assets
+🕹️ How It Works
 
-Tech Stack
+Upload a Gun: Players design and upload their gun model.
 
-Frontend: React + Phaser 3 + TypeScript + Vite.
-GitHub
+Mint as NFT: The game mints it on Push Chain using ERC-1155.
 
-Chain: Push Chain (smart contracts for tokens, items, leaderboard).
+Play and Earn: Fight enemies, collect coins, and survive as long as possible.
 
-Wallet: Web3 provider for the user wallet (e.g., MetaMask or Push Chain compatible wallet).
+Convert Rewards: End your run to claim on-chain tokens.
 
-Optional: IPFS for item metadata, TheGraph-style indexing or lightweight offchain indexer for richer leaderboards.
+Upgrade & Trade: Use tokens to upgrade or trade your NFTs.
 
-Architecture (high level)
+💡 Future Roadmap
 
-Client (React + Phaser) — gameplay, input, local token accounting, UI.
+🔧 Weapon Upgrade & Stat Customization
 
-Onchain Contracts — ERC-20 style token (game currency) + ERC-1155 / ERC-721 or custom item contract for crafted items + Leaderboard contract (records top scores/addresses).
+🧩 In-Game Marketplace for Trading NFTs
 
-Backend / Indexer (optional) — optional offchain indexer for efficient leaderboard queries and marketplace search.
+⚔️ PvP Battle Mode
 
-Wallet & Sign — players sign mint/craft/submit transactions from the client.
+🪙 DAO Integration for Player Governance
 
-What’s included in this repo
+🌍 Community Weapon Contests
 
-This repo currently contains the Phaser + React frontend template (game code, UI, assets, scripts). See the project structure in the repo for the entry points and scene structure.
-GitHub
+🧑‍💻 Getting Started
 
-Note: If your smart contracts live in a different repo or aren’t added yet, explicitly link them from here (recommended). If you do not have on-chain contracts here yet, the README below includes example smart contract interfaces and sample scripts you can add.
-
-Quickstart (Local dev)
-
-# clone
+# Clone the repo
 
 git clone https://github.com/SpacePanda7077/pushChain.git
+
+# Navigate into the project folder
+
 cd pushChain
 
-# install
+# Install dependencies
 
 npm install
 
-# run dev server
+# Start the dev server
 
 npm run dev
 
-# build for production
+⚠️ Make sure your wallet is connected to Push Chain Testnet.
 
-npm run build
+🔗 Smart Contract Info
 
-Default dev server: http://localhost:8080 (or the port Vite chooses).
+(Add when deployed)
 
-Hackathon Pitch (short)
+Contract Address: <your-contract-address>
+Network: Push Chain Testnet
+Standard: ERC-1155
 
-Problem: Modern Web2 arcade games lack real ownership and persistent on-chain value.
-Solution: PushChain combines fast arcade gameplay with meaningful on-chain assets and an immutable leaderboard — players earn tokens, craft items that truly exist onchain, and trade them. Judges can immediately try gameplay, craft an item, and watch the onchain leaderboard update (or in mock demo mode, show full UX offline).
+📸 Screenshots / Demo
+
+(Add gameplay GIFs or screenshots here)
+Example:
+
+🏆 Hackathon Tagline
+
+“Play. Earn. Upgrade. Own — Your survival, your weapon, your chain.”
+
+📬 Contact
+
+Developer: SpacePanda
+GitHub: @SpacePanda7077
+
+Twitter / X: @SpacePanda7077
