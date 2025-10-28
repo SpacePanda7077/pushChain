@@ -1,18 +1,49 @@
 import { useEffect, useState } from "react";
 import { EventBus } from "../game/EventBus";
 import useGetNfts from "./useGetNfts";
-import { usePushWalletContext } from "@pushchain/ui-kit";
+import { usePushChainClient, usePushWalletContext } from "@pushchain/ui-kit";
+import { PushChain } from "@pushchain/core";
+import { Abi, ContractAddress } from "../blockChain/blockChainInfo";
 
 function MyWeapons() {
     const [isWeaponmodal, setWeaponModal] = useState(false);
     const [d_has_nft, set_d_has_nft] = useState(true);
     const [weapon_images, set_weapon_images] = useState<string[]>([]);
-    const { connectionStatus } = usePushWalletContext();
+    const { connectionStatus, universalAccount } = usePushWalletContext();
+    const { pushChainClient } = usePushChainClient();
+    const { checkNft } = useGetNfts();
     const { my_weapons } = useGetNfts();
     async function get_weapon_data(uri: string) {
         const res = await fetch(uri);
         const data = await res.json();
         set_weapon_images((prevItems) => [...prevItems, data.image]);
+    }
+    async function mintFirstWeapon() {
+        if (universalAccount && pushChainClient) {
+            const uri =
+                "https://plum-total-louse-876.mypinata.cloud/ipfs/bafkreiehd3l55occ3dwfhcb6bm7qbtnzwk3nvl3af7xpfxkszn5ewljb6a";
+            const data = PushChain.utils.helpers.encodeTxData({
+                abi: Abi,
+                functionName: "craft_weapon",
+                // Transfer 10 tokens, converted to 18 decimal places
+                args: [
+                    universalAccount.address,
+                    uri,
+                    BigInt(10),
+                    BigInt(20),
+                    BigInt(40),
+                ],
+            });
+
+            const txHash = await pushChainClient.universal.sendTransaction({
+                to: ContractAddress, // The smart contract address on Push Chain
+                value: BigInt("0"), // No $PC being sent, just contract interaction
+                data: data, // The encoded function call
+            });
+            const receipt = await txHash.wait();
+            console.log(receipt);
+            await checkNft();
+        }
     }
 
     useEffect(() => {
@@ -28,23 +59,27 @@ function MyWeapons() {
         EventBus.on("open_weapon_modal", () => {
             setWeaponModal(true);
         });
-        EventBus.on("check_for_nft", () => {
-            if (my_weapons.length > 0) {
-                EventBus.emit("start_game");
-            }
-        });
     }, []);
+
     useEffect(() => {
         if (my_weapons && my_weapons.length > 0) {
             EventBus.emit("has_nft");
             console.log("have nft");
         }
+        EventBus.on("check_for_nft", () => {
+            if (my_weapons.length > 0) {
+                console.log("starat");
+                EventBus.emit("start_game");
+            }
+        });
     }, [my_weapons]);
     return (
         <>
             {d_has_nft && (
                 <div className="mint-text">
-                    <h1>Mint your fist weapon</h1>
+                    <button onClick={mintFirstWeapon}>
+                        Mint your fist weapon
+                    </button>
                 </div>
             )}
 
