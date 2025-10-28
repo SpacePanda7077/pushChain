@@ -38,6 +38,9 @@ export class Player {
     coinsCollected: number;
     isMoving: boolean;
     shadow: Phaser.GameObjects.Ellipse;
+    mouseButtons: Phaser.Input.Pointer;
+    canRoll: boolean;
+    isRolling: boolean;
     constructor(
         scene: Phaser.Scene,
         world: RAPIER.World,
@@ -48,7 +51,7 @@ export class Player {
         this.world = world;
         this.x = x;
         this.y = y;
-        this.speed = 100;
+        this.speed = 500;
         this.health = 100;
         this.MaxHealth = 100;
         this.inputVector = { x: 0, y: 0 };
@@ -58,6 +61,8 @@ export class Player {
         this.coinsCollected = 0;
         this.isBeingKnockedBack = false;
         this.isMoving = false;
+        this.canRoll = true;
+        this.isRolling = false;
 
         this.lastShotTime = 0;
         this.lastScentDropTime = 0;
@@ -65,7 +70,7 @@ export class Player {
             ammo: 30,
             maxAmmo: 30,
             fireRate: 150,
-            reloadTime: 4000,
+            reloadTime: 2000,
             damage: 50,
             grenade: 0,
             stims: 0,
@@ -117,6 +122,14 @@ export class Player {
             frameRate: 10,
             repeat: -1,
         });
+        this.body.anims.create({
+            key: "roll",
+            frames: this.body.anims.generateFrameNumbers("player", {
+                start: 11,
+                end: 15,
+            }),
+            frameRate: 15,
+        });
     }
     createGun() {
         const gun = new WeaponObject(
@@ -146,21 +159,7 @@ export class Player {
         this.rightKey = this.scene.input.keyboard?.addKey("d");
         this.upKey = this.scene.input.keyboard?.addKey("w");
         this.downKey = this.scene.input.keyboard?.addKey("s");
-        this.inVent1 = this.scene.input.keyboard?.addKey(
-            Phaser.Input.Keyboard.KeyCodes.ONE
-        );
-        this.inVent1 = this.scene.input.keyboard?.addKey(
-            Phaser.Input.Keyboard.KeyCodes.TWO
-        );
-        this.inVent1 = this.scene.input.keyboard?.addKey(
-            Phaser.Input.Keyboard.KeyCodes.THREE
-        );
-        this.inVent1 = this.scene.input.keyboard?.addKey(
-            Phaser.Input.Keyboard.KeyCodes.FOUR
-        );
-        this.inVent1 = this.scene.input.keyboard?.addKey(
-            Phaser.Input.Keyboard.KeyCodes.FIVE
-        );
+        this.mouseButtons = this.scene.input.mousePointer;
     }
     handleInput() {
         this.inputVector.x = 0;
@@ -189,11 +188,33 @@ export class Player {
             this.isMoving = false;
         }
 
-        if (this.isMoving) {
+        if (this.isMoving && !this.isRolling) {
             this.body.play("run", true);
+        } else if (this.isMoving && this.isRolling) {
+            this.body.play("roll", true);
         } else {
             this.body.play("idle", true);
         }
+        if (
+            this.mouseButtons.isDown &&
+            this.mouseButtons.button === 2 &&
+            this.canRoll
+        ) {
+            this.playerRoll();
+        }
+        this.body.on("animationcomplete", (anim: any) => {
+            if (anim.key === "roll") {
+                this.speed = 500;
+                this.isRolling = false;
+                this.scene.time.addEvent({
+                    delay: 500,
+                    callbackScope: this.scene,
+                    callback: () => {
+                        this.canRoll = true;
+                    },
+                });
+            }
+        });
     }
     sync() {
         this.updateYSort();
@@ -208,12 +229,12 @@ export class Player {
         this.checkForDeath();
     }
 
-    updateVelocity() {
+    updateVelocity(delta: number) {
         if (!this.isBeingKnockedBack) {
             this.rigidBody.setLinvel(
                 {
-                    x: this.inputVector.x * this.speed,
-                    y: this.inputVector.y * this.speed,
+                    x: this.inputVector.x * this.speed * (delta / 60),
+                    y: this.inputVector.y * this.speed * (delta / 60),
                 },
                 true
             );
@@ -239,24 +260,29 @@ export class Player {
         this.body.flipX = fliped;
         this.gun.flipY = fliped;
     }
-    createBullet() {
-        const bullet = new Bullet(
-            this.scene,
-            this.world,
-            this.rigidBody.translation().x + Math.cos(this.angle) * 50, // Offset to gun tip
-            this.rigidBody.translation().y + Math.sin(this.angle) * 50, // Offset to gun tip
-            this.angle,
-            "player_bullet",
-            this.inventory.damage
-        );
-        return bullet;
+    createBullet(bulletArray: Bullet[]) {
+        type userData = { type: string };
+
+        const bullet = bulletArray.find((bullet) => bullet.isActive === false);
+
+        if (bullet) {
+            bullet.isActive = true;
+            bullet.rigidBody.setTranslation(
+                { x: this.body.x, y: this.body.y },
+                true
+            );
+            bullet.angle = this.angle;
+            bullet.body.rotation = bullet.angle;
+            (bullet.rigidBody.userData as userData).type = "player_bullet";
+            bullet.damage = this.inventory.damage;
+            return bullet;
+        }
     }
-    shoot(time: number, activeBullets: Bullet[]) {
-        const shootButton = this.scene.input.mousePointer;
+    shoot(time: number, bulletArray: Bullet[], activeBullets: Bullet[]) {
         const ammoCount = this.inventory.ammo;
         if (
-            shootButton.isDown &&
-            shootButton.button === 0 &&
+            this.mouseButtons.isDown &&
+            this.mouseButtons.button === 0 &&
             !this.isBeingKnockedBack &&
             ammoCount &&
             ammoCount > 0
@@ -265,10 +291,12 @@ export class Player {
                 return;
             }
             this.lastShotTime = time;
-            const bullet = this.createBullet();
-            activeBullets.push(bullet);
+            const bullet = this.createBullet(bulletArray);
+
+            activeBullets.push(bullet as Bullet);
             this.inventory.ammo -= 1;
             this.scene.sound.play("gunSound");
+            this.scene.cameras.main.shake(50, 0.005);
             this.scene.scene.get("Ui").events.emit("player-shot", {
                 ammoCount: this.inventory.ammo,
                 maxAmmo: this.inventory.maxAmmo,
@@ -331,6 +359,11 @@ export class Player {
             return false;
         }
         return true;
+    }
+    playerRoll() {
+        this.canRoll = false;
+        this.isRolling = true;
+        this.speed = 1200;
     }
 }
 

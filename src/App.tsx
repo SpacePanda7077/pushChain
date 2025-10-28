@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { IRefPhaserGame, PhaserGame } from "./PhaserGame";
 // Import Push UI Kit
 import {
@@ -10,6 +10,9 @@ import {
 import Balance from "./components/Balance";
 
 import Claim from "./components/Claim";
+import CraftWeapon from "./components/CraftWeapon";
+import { fromHex, toHex } from "viem";
+import MyWeapons from "./components/MyWeapons";
 
 function App() {
     const walletConfig = {
@@ -29,6 +32,8 @@ function App() {
                 </div>
                 <Balance />
                 <Claim />
+                <CraftWeapon />
+                <MyWeapons />
             </PushUniversalWalletProvider>
             <PhaserGame ref={phaserRef} />
         </div>

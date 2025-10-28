@@ -10,6 +10,7 @@ export class Bullet {
     angle: number;
     type: string;
     damage: number;
+    isActive: boolean;
     constructor(
         scene: Phaser.Scene,
         world: RAPIER.World,
@@ -26,6 +27,7 @@ export class Bullet {
         this.angle = angle;
         this.type = type;
         this.damage = damage;
+        this.isActive = false;
         this.createBulletBody();
     }
 

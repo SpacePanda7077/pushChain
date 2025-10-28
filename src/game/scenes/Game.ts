@@ -9,6 +9,7 @@ import { ScentNode } from "../../classes/player/scentNode";
 import { Coin } from "../../classes/loots/pickUps";
 import { normalUpgrade } from "../../classes/loots/upgrades";
 import { Choice } from "../../classes/loots/choice";
+import { bob } from "viem/chains";
 
 export class Game extends Scene {
     world: RAPIER.World;
@@ -30,6 +31,8 @@ export class Game extends Scene {
     enemyAmountToKillBeforeOptions: number;
     availablePickups: Coin[];
     options: Choice[];
+    bulletsArray: Bullet[];
+    gameStarted: boolean;
     constructor() {
         super("Game");
     }
@@ -55,15 +58,17 @@ export class Game extends Scene {
             this.scene.launch("Ui");
         }
 
-        // this.input.mouse?.disableContextMenu();
+        this.input.mouse?.disableContextMenu();
         this.initializeWorld();
         this.optionIsOpen = false;
         this.enemyAmountToKillBeforeOptions = 5;
+        this.gameStarted = false;
         this.timeElapsed = 0;
         this.threatLevel = 1;
         this.spawnTimer = 0;
         this.mapGrid = [];
         this.tileArray = {};
+        this.bulletsArray = [];
         this.activeBullet = [];
         this.availableEnemies = [];
         this.availablePickups = [];
@@ -75,6 +80,7 @@ export class Game extends Scene {
         this.add.image(0, 0, "walls").setOrigin(0).setDepth(6);
 
         this.createMap();
+        this.createBulletPool();
         this.player = new Player(
             this,
             this.world,
@@ -96,20 +102,28 @@ export class Game extends Scene {
             this.player.body.y
         );
         this.availableEnemies.push(enemy);
+        this.time.addEvent({
+            delay: 5000,
+            callbackScope: this,
+            callback: () => {
+                this.gameStarted = true;
+            },
+        });
 
         EventBus.emit("current-scene-ready", this);
     }
     update(time: number, delta: number): void {
+        if (!this.gameStarted) return;
         // Update RAPIER world
         this.world.step(this.eventQueue);
         // Handle player input
         this.player.handleInput();
         // update player based on input
-        this.player.updateVelocity();
+        this.player.updateVelocity(delta);
         // Sync player position
         this.player.sync();
         // shoot gun
-        this.player.shoot(time, this.activeBullet);
+        this.player.shoot(time, this.bulletsArray, this.activeBullet);
         //recover from knockback
         this.player.recoverFromKnockBack();
 
@@ -130,6 +144,20 @@ export class Game extends Scene {
         // Initialize RAPIER world here
         this.world = new RAPIER.World({ x: 0, y: 0 }); // No gravity
         this.eventQueue = new RAPIER.EventQueue(true);
+    }
+    createBulletPool() {
+        for (let i = 0; i < 400; i++) {
+            const bullet = new Bullet(
+                this,
+                this.world,
+                -1000, // Offset to gun tip
+                -1000, // Offset to gun tip
+                0,
+                "",
+                0
+            );
+            this.bulletsArray.push(bullet);
+        }
     }
     createMap() {
         const map = this.make.tilemap({ key: "map" });
@@ -202,7 +230,12 @@ export class Game extends Scene {
                 bullet.body.y >
                     this.player.body.y + this.cameras.main.height / 2
             ) {
-                bullet.destroyBullet();
+                bullet.rigidBody.setTranslation({ x: -1000, y: -1000 }, true);
+                bullet.body.setPosition(
+                    bullet.rigidBody.translation().x,
+                    bullet.rigidBody.translation().y
+                );
+                bullet.isActive = false;
                 this.activeBullet.splice(index, 1);
                 console.log("Bullet removed");
             }
@@ -272,7 +305,15 @@ export class Game extends Scene {
             (bullet) => bullet.rigidBody === b1
         );
         if (collidedBullet) {
-            collidedBullet.destroyBullet();
+            collidedBullet.rigidBody.setTranslation(
+                { x: -1000, y: -1000 },
+                true
+            );
+            collidedBullet.body.setPosition(
+                collidedBullet.rigidBody.translation().x,
+                collidedBullet.rigidBody.translation().y
+            );
+            collidedBullet.isActive = false;
             const index = this.activeBullet.indexOf(collidedBullet);
             this.activeBullet.splice(index, 1);
             const collidedEnemy = this.availableEnemies.find(
@@ -316,10 +357,9 @@ export class Game extends Scene {
         b2: RAPIER.RigidBody | null
     ) {
         type enemyUserData = { type: string; owner: IEnemy };
-        console.log(b1?.userData, "collided with ", b2?.userData);
+
         const collidedEnemy = (b2?.userData as enemyUserData).owner;
         if (collidedEnemy) {
-            console.log(collidedEnemy.isAttacking);
             collidedEnemy.isAttacking = true;
         }
     }

@@ -31,6 +31,7 @@ export class Ui extends Scene {
     loseMenu: Phaser.GameObjects.Container;
     highScore: Phaser.GameObjects.Text;
     coins: Phaser.GameObjects.Text;
+    coinToClaim: number;
     constructor() {
         super("Ui");
     }
@@ -97,6 +98,7 @@ export class Ui extends Scene {
                 this.loseMenu.setActive(true).setVisible(true);
                 this.highScore.text = `HighScore : ${data.highScore}`;
                 this.coins.text = `Coins Collected : ${data.coinsCollected}`;
+                this.coinToClaim = data.coinsCollected;
             }
         );
         EventBus.emit("current-scene-ready", this);
@@ -227,7 +229,7 @@ export class Ui extends Scene {
             .setInteractive()
             .on("pointerdown", () => {
                 claimBtn.setActive(false);
-                EventBus.emit("claim", 10);
+                EventBus.emit("claim", this.coinToClaim);
                 this.scene.stop();
                 this.scene.get("Game").scene.start("Menu");
                 this.scene.get("Game").scene.stop();

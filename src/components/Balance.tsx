@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 
 // Import Push UI Kit
 import { usePushChainClient, usePushWalletContext } from "@pushchain/ui-kit";
-import { PushChain } from "@pushchain/core";
 import { createPublicClient, http } from "viem";
 import { ContractAddress, Abi } from "../blockChain/blockChainInfo";
 

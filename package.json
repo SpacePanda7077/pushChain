@@ -31,6 +31,7 @@
         "@pushchain/core": "^2.1.1",
         "@pushchain/ui-kit": "^2.0.13",
         "phaser": "^3.90.0",
+        "pinata": "^2.5.1",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "rot-js": "^2.2.1"

@@ -52,4 +52,40 @@ body {
     top: 5%;
     transform: translate(-100%, -50%);
 }
+.craftWeapon-container {
+    border-radius: 10px;
+    background-color: #353434;
+    padding: 40px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.mint-text {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    background-color: #353434;
+    padding: 10px;
+}
+.weapon-modal-container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    border-radius: 10px;
+    background-color: #353434;
+    padding: 40px;
+}
+.weapon-modal-container img {
+    width: 100px;
+}
 
